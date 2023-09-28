@@ -1,0 +1,57 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '/providers/pet_details_provider.dart';
+
+class PetDetailsForm extends StatelessWidget {
+  const PetDetailsForm(
+      {super.key,
+      required this.petNameController,
+      required this.petAgeController,
+      required this.petBreedController,
+      required this.petTypeController});
+
+  final TextEditingController petNameController;
+  final TextEditingController petAgeController;
+  final TextEditingController petBreedController;
+  final TextEditingController petTypeController;
+
+  @override
+  Widget build(BuildContext context) {
+    final petProvider = Provider.of<PetDetailsProvider>(context);
+
+    return Column(
+      children: [
+        TextField(
+          controller: petProvider.petNameController,
+          decoration: const InputDecoration(labelText: 'Pet Name'),
+          onChanged: (value) {
+            petProvider.updatePetName(value);
+          },
+        ),
+        TextField(
+          controller: petProvider.petAgeController,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(labelText: 'Pet Age'),
+          onChanged: (value) {
+            final age = int.tryParse(value) ?? 0;
+            petProvider.updatePetAge(age);
+          },
+        ),
+        TextField(
+          controller: petProvider.petBreedController,
+          decoration: const InputDecoration(labelText: 'Pet Breed'),
+          onChanged: (value) {
+            petProvider.updatePetBreed(value);
+          },
+        ),
+        TextField(
+          controller: petProvider.petTypeController,
+          decoration: const InputDecoration(labelText: 'Pet Type'),
+          onChanged: (value) {
+            petProvider.updatePetType(value);
+          },
+        ),
+      ],
+    );
+  }
+}

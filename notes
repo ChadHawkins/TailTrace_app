@@ -1,0 +1,178 @@
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:tracking_app/providers/pet_list_provider.dart';
+import 'dart:io';
+import 'package:tracking_app/models/pet.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+class AddPetPage extends StatefulWidget {
+  @override
+  _AddPetPageState createState() => _AddPetPageState();
+}
+
+class _AddPetPageState extends State<AddPetPage> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController typeController = TextEditingController();
+  final TextEditingController breedController = TextEditingController();
+  final TextEditingController ageController = TextEditingController();
+  File? _selectedImage;
+  late FirebaseAuth _auth;
+  User? user;
+  String? userId;
+  @override
+  void initState() {
+    super.initState();
+    _auth = FirebaseAuth.instance; // Initialize _auth in initState
+    user = _auth.currentUser; // Initialize user in initState
+    userId = user?.uid; // Initialize userId in initState
+  }
+
+  Future<void> _getImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select an Image'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Camera'),
+              onPressed: () async {
+                Navigator.pop(context, 'camera');
+              },
+            ),
+            TextButton(
+              child: Text('Gallery'),
+              onPressed: () async {
+                Navigator.pop(context, 'gallery');
+              },
+            ),
+          ],
+        );
+      },
+    );
+    if (pickedFile != null) {
+      final source =
+          pickedFile == 'camera' ? ImageSource.camera : ImageSource.gallery;
+      final image = await picker.pickImage(source: source);
+
+      if (image != null) {
+        setState(() {
+          _selectedImage = File(image.path);
+        });
+      }
+    }
+  }
+
+  Future<String?> _uploadImage(File image) async {
+    try {
+      final Reference storageReference = FirebaseStorage.instance
+          .ref()
+          .child('users-pets-all-pets')
+          .child(userId!)
+          .child('images')
+          .child('pet_${DateTime.now().millisecondsSinceEpoch}.jpg');
+
+      final UploadTask uploadTask = storageReference.putFile(image);
+      final TaskSnapshot taskSnapshot = await uploadTask;
+      final String imageUrl = await taskSnapshot.ref.getDownloadURL();
+      return imageUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Add Pet'),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: nameController,
+                decoration: InputDecoration(labelText: 'Name'),
+              ),
+              TextFormField(
+                controller: typeController,
+                decoration: InputDecoration(labelText: 'Type'),
+              ),
+              TextFormField(
+                controller: breedController,
+                decoration: InputDecoration(labelText: 'Breed'),
+              ),
+              TextFormField(
+                controller: ageController,
+                decoration: InputDecoration(labelText: 'Age'),
+              ),
+              ElevatedButton(
+                onPressed: _getImage,
+                child: Text('Select Image'),
+              ),
+              _selectedImage != null ? Image.file(_selectedImage!) : SizedBox(),
+              ElevatedButton(
+                onPressed: () async {
+                  // Get the pet details from the input fields
+                  final String name = nameController.text.trim();
+                  final String type = typeController.text.trim();
+                  final String breed = breedController.text.trim();
+                  final int age = int.tryParse(ageController.text.trim()) ?? 0;
+
+                  // Check if all required fields are filled
+                  if (name.isNotEmpty &&
+                      type.isNotEmpty &&
+                      breed.isNotEmpty &&
+                      age > 0 &&
+                      _selectedImage != null) {
+                    // Upload the image
+                    final imageUrl = await _uploadImage(_selectedImage!);
+
+                    if (imageUrl != null) {
+                      // Create a new Pet object
+                      final Pet newPet = Pet(
+                        id: UniqueKey().toString(),
+                        name: name,
+                        petType: type,
+                        breed: breed,
+                        age: age.toString(),
+                        imageUrl: imageUrl,
+                      );
+
+                      // Add the pet to Firebase Firestore using the PetListProvider
+                      await PetListProvider().addPet(newPet, userId!);
+
+                      // Clear the input fields
+                      nameController.clear();
+                      typeController.clear();
+                      breedController.clear();
+                      ageController.clear();
+                      setState(() {
+                        _selectedImage = null; // Clear the selected image
+                      });
+
+                      Navigator.of(context).pop();
+                    } else {
+                      // Handle the case where image upload failed
+                      // You can display an error message or show a dialog
+                    }
+                  } else {
+                    // Display an error message or dialog for incomplete details
+                    // You can use a SnackBar or AlertDialog for this
+                  }
+                },
+                child: Text('Save Pet'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

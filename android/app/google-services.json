@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "992748055491",
+    "firebase_url": "https://tailtracetracking-default-rtdb.firebaseio.com",
+    "project_id": "tailtracetracking",
+    "storage_bucket": "tailtracetracking.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:992748055491:android:7224479a1552fb2fef2b76",
+        "android_client_info": {
+          "package_name": "com.example.tracking_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "992748055491-jpfmp43c2bufanb6pvkcuguibehee1dv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlJxyPTGNuWdDBGUzUia88twEGqex0i3Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "992748055491-jpfmp43c2bufanb6pvkcuguibehee1dv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "992748055491-a7dai46mlvncm7tl24us2kfg8bt5uimb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tailtraceApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
