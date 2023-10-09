@@ -1,8 +1,9 @@
 import 'dart:io';
-import 'package:tracking_app/widgets/add_pet_button.dart';
+import 'package:tracking_app/widgets/save_pet_button.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tracking_app/widgets/photo_gallery.dart';
+
 
 class AddPetPage extends StatefulWidget {
   const AddPetPage({super.key});
@@ -21,8 +22,9 @@ class _AddPetPageState extends State<AddPetPage> {
   String? userId;
   File? selectedImage;
   bool isImageSelected = false;
+  String imageUrl = '';
 
-  onImageSelected(File? image) {
+  onImageSelected(File? image) async {
     setState(() {
       selectedImage = image;
       isImageSelected = image != null;
@@ -74,14 +76,23 @@ class _AddPetPageState extends State<AddPetPage> {
                   ),
                   SizedBox(
                     height: 60,
-                    child: PhotoAndGallery(onImageSelected: onImageSelected),
+                    child: PhotoAndGallery(
+                      onImageSelected: onImageSelected,
+                    ),
                   ),
                 ],
               ),
               ElevatedButton(
                 onPressed: () async {
-                  savePet(context, nameController, typeController,
-                      breedController, ageController, isImageSelected);
+                  savePet(
+                      context,
+                      nameController,
+                      typeController,
+                      breedController,
+                      ageController,
+                      isImageSelected,
+                      imageUrl);
+                      // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => PetListPage()));
                 },
                 child: const Text('Save Pet'),
               ),

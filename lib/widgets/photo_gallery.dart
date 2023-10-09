@@ -7,9 +7,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
 class PhotoAndGallery extends StatefulWidget {
-  const PhotoAndGallery({super.key, required this.onImageSelected});
+  const PhotoAndGallery({
+    super.key,
+    required this.onImageSelected,
+  });
 
   final void Function(File? image) onImageSelected;
+
   @override
   State<PhotoAndGallery> createState() => _PhotoAndGalleryState();
 }
@@ -56,20 +60,24 @@ class _PhotoAndGalleryState extends State<PhotoAndGallery> {
     }
   }
 
+  // String uniquePetName=DateTime.now().millisecondsSinceEpoch.toString();
+
   Future uploadFile() async {
-    if (image == null) return;
+    if (image == null) return '';
+
     final fileName = basename(image!.path);
-    final destination = 'files/$fileName';
+    final destination = 'Pets/$fileName';
 
     try {
       final ref = firebase_storage.FirebaseStorage.instance
           .ref(destination)
-          .child('file/');
+          .child(fileName);
       await ref.putFile(image!);
 
       widget.onImageSelected(image);
     } catch (e) {
-      print('error occured');
+      print('error occured: $e');
+      return '';
     }
   }
 

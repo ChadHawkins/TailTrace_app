@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tracking_app/screens/add_pet_page.dart';
 import 'package:tracking_app/screens/login_screen.dart';
+import 'package:tracking_app/screens/pet_list_page.dart';
 import 'package:tracking_app/screens/profile_screen.dart';
 import 'package:tracking_app/services/auth_service.dart';
 import 'package:tracking_app/widgets/battery_status_card.dart';
@@ -74,7 +74,7 @@ class HomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const AddPetPage(),
+                    builder: (context) => PetListPage(),
                   ),
                 );
               },

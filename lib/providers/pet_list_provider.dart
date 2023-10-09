@@ -29,7 +29,7 @@ class PetListProvider extends ChangeNotifier {
           age: data['age'] ?? 0,
           breed: data['breed'] ?? '',
           petType: data['type'] ?? '',
-          //imageUrl: data['imageUrl'] ?? '',
+          imageUrl: data['imageUrl'] ?? '',
         );
       }).toList();
       notifyListeners();
