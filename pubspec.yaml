@@ -50,11 +50,12 @@ dependencies:
   provider: ^6.0.5
   flutter_flushbar: ^0.0.2
   flutter_riverpod: ^2.4.0
-  uuid: ^4.0.0
+  uuid: ^4.1.0
   cached_network_image: ^3.2.3
   camera: ^0.10.5+4
   path_provider: ^2.1.1
   path: ^1.8.3
+  riverpod: ^2.4.3
 
 
 
@@ -86,7 +87,10 @@ flutter:
     - assets/images/profile/me.jpg
     - assets/images/wallpaper.jpg
     - assets/images/background.png
+    - assets/images/addpet.jpg
     - assets/images/track.jpg
+    - assets/images/profile/greybackground.webp
+    - assets/images/petlistBACK.jpeg
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

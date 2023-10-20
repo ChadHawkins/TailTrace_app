@@ -1,30 +1,23 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'Other/wrapper.dart';
-import 'package:tracking_app/providers/pet_details_provider.dart';
-import 'package:tracking_app/providers/pet_list_provider.dart';
-import 'package:tracking_app/services/auth_service.dart';
+import 'package:tracking_app/providers/user_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:tracking_app/screens/homescreen/home_screen.dart';
+import 'package:tracking_app/screens/loading_screen/loading_screen.dart';
+import 'package:tracking_app/screens/auth_screen/auth_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  final petListProvider = PetListProvider();
-  await petListProvider.fetchPets();
-
   runApp(
     MultiProvider(
       providers: [
-        Provider<AuthService>(
-          create: (context) => AuthService(),
-        ),
-        ChangeNotifierProvider<PetDetailsProvider>(
-          create: (context) => PetDetailsProvider(),
-        ),
-        ChangeNotifierProvider<PetListProvider>.value(
-          value: petListProvider, // Use the pre-initialized provider
-        ),
+        ChangeNotifierProvider
+        <UserProvider>(
+          create: (_) => UserProvider(),
+        )
       ],
       child: const MyApp(),
     ),
@@ -41,7 +34,19 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const Wrapper(),
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const LoadingScreen();
+          }
+
+          if (snapshot.hasData) {
+            return const HomePage();
+          }
+          return const SignUp();
+        },
+      ),
     );
   }
 }
